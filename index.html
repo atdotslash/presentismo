@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión Escolar Técnica</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="login-view" class="view-container active">
+        <div class="login-box">
+            <h2>Acceso Docente</h2>
+            <input type="text" id="login-user" placeholder="Usuario">
+            <input type="password" id="login-pass" placeholder="Contraseña">
+            <button onclick="app.login()">Ingresar</button>
+            <p id="login-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <div id="app-view" class="view-container">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>Gestión Escolar</h3>
+                <button class="menu-toggle-mobile" onclick="app.toggleMenu()">☰</button>
+            </div>
+            <ul class="menu">
+                <li><button onclick="app.showPanel('panel-asistencia')">Asistencia</button></li>
+                <li><button onclick="app.showPanel('panel-calificaciones')">Calificaciones</button></li>
+                <li><button onclick="app.showPanel('panel-registro-clases')">Registro de Clases</button></li>
+                <li><button onclick="app.showPanel('panel-observaciones')">Observaciones</button></li>
+                <li><button onclick="app.showPanel('panel-seguimiento')">Seguimiento Académico</button></li>
+                <li><button onclick="app.showPanel('panel-reportes')">Reportes</button></li>
+                <li><button onclick="app.logout()" class="btn-logout">Cerrar Sesión</button></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <button class="menu-toggle-desktop" onclick="app.toggleMenu()">☰</button>
+            <div id="loading-spinner" class="spinner hidden">Cargando...</div>
+
+            <section id="panel-asistencia" class="panel active">
+                <h2>Control de Asistencia</h2>
+                <div class="filters">
+                    <input type="date" id="asist-fecha" onchange="app.loadMateriasDia('asist-materia', this.value)">
+                    <select id="asist-materia" onchange="app.renderAsistenciaList()"></select>
+                    <select id="asist-grupo" onchange="app.renderAsistenciaList()">
+                        <option value="ALL">Curso Completo</option>
+                        <option value="Grupo A">Grupo A</option>
+                        <option value="Grupo B">Grupo B</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table id="table-asistencia">
+                        <thead>
+                            <tr>
+                                <th>Alumno</th>
+                                <th>Presente</th>
+                                <th>Media Falta</th>
+                                <th>Ausente</th>
+                                <th>Ausente Justificado</th>
+                                <th>No Aplica</th>
+                                <th>Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-asistencia"></tbody>
+                    </table>
+                </div>
+                <button class="btn-primary" onclick="app.saveAsistencia()">Guardar Asistencia</button>
+            </section>
+
+            <section id="panel-calificaciones" class="panel">
+                <h2>Calificaciones</h2>
+                <div class="filters">
+                    <select id="calif-materia" onchange="app.renderCalificacionesList()"></select>
+                    <select id="calif-periodo" onchange="app.renderCalificacionesList()"></select>
+                    <input type="text" id="calif-desc" placeholder="Descripción (Ej: TP1)">
+                </div>
+                <div class="table-responsive">
+                    <table id="table-calificaciones">
+                        <thead>
+                            <tr>
+                                <th>Alumno</th>
+                                <th>Nota (0-10)</th>
+                                <th>Bono (+1)</th>
+                                <th>Promedio Actual</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-calificaciones"></tbody>
+                    </table>
+                </div>
+                <button class="btn-primary" onclick="app.saveCalificaciones()">Guardar Calificaciones</button>
+            </section>
+
+            <section id="panel-registro-clases" class="panel">
+                <h2>Registro de Clases (Libro de Temas)</h2>
+                <div class="form-group">
+                    <label>Fecha:</label>
+                    <input type="date" id="reg-fecha">
+                    <label>Materia:</label>
+                    <select id="reg-materia"></select>
+                    <label>Temas Desarrollados:</label>
+                    <textarea id="reg-temas"></textarea>
+                    <label>Actividades Realizadas:</label>
+                    <textarea id="reg-actividades"></textarea>
+                    <label>Enlaces Drive (Opcional):</label>
+                    <input type="text" id="reg-drive">
+                    <button class="btn-primary" onclick="app.saveRegistroClase()">Guardar Registro</button>
+                </div>
+            </section>
+
+            <section id="panel-observaciones" class="panel">
+                <h2>Observaciones Conductuales/Generales</h2>
+                <div class="form-group">
+                    <select id="obs-alumno"></select>
+                    <select id="obs-tipo">
+                        <option value="Positiva">Positiva</option>
+                        <option value="Neutra">Neutra</option>
+                        <option value="Negativa">Negativa</option>
+                    </select>
+                    <textarea id="obs-desc" placeholder="Detalle de la observación"></textarea>
+                    <button class="btn-primary" onclick="app.saveObservacion()">Guardar Observación</button>
+                </div>
+            </section>
+
+            <section id="panel-seguimiento" class="panel">
+                <h2>Seguimiento Académico</h2>
+                <div class="form-group">
+                    <select id="seg-alumno"></select>
+                    <select id="seg-materia"></select>
+                    <input type="text" id="seg-tema" placeholder="Tema evaluado">
+                    <select id="seg-avance">
+                        <option value="Completado">Completado</option>
+                        <option value="En curso">En curso</option>
+                        <option value="Pendiente">Pendiente</option>
+                    </select>
+                    <textarea id="seg-notas" placeholder="Notas adicionales"></textarea>
+                    <button class="btn-primary" onclick="app.saveSeguimiento()">Guardar Seguimiento</button>
+                </div>
+            </section>
+
+            <section id="panel-reportes" class="panel">
+                <h2>Reportes e Informes</h2>
+                <div class="filters">
+                    <select id="rep-materia"></select>
+                    <select id="rep-periodo"></select>
+                    <button class="btn-primary" onclick="app.generarReporte()">Generar Informe</button>
+                    <button class="btn-secondary" onclick="window.print()">Imprimir PDF</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="table-reportes">
+                        <thead>
+                            <tr>
+                                <th>Alumno</th>
+                                <th>Promedio</th>
+                                <th>Asistencia %</th>
+                                <th>Valoración</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-reportes"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
