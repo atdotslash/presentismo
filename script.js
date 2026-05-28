@@ -239,7 +239,34 @@ loadMateriasDia: function(selectId, dateString) {
             obsInput.required = false;
         }
     },
-
+    
+    marcarTodos: function(estado) {
+        const tbody = document.getElementById('tbody-asistencia');
+        const filas = tbody.querySelectorAll('tr');
+        
+        filas.forEach(tr => {
+            // Buscamos todos los radio buttons de esta fila
+            const radios = tr.querySelectorAll('input[type="radio"]');
+            let alumnoId = null;
+            
+            radios.forEach(radio => {
+                // Si el valor del radio coincide con el estado solicitado, lo tildamos
+                if (radio.value === estado) {
+                    radio.checked = true;
+                }
+                // Extraemos el ID del alumno del atributo 'name' (ej: "ast_45")
+                if (!alumnoId && radio.name) {
+                    alumnoId = radio.name.split('_')[1];
+                }
+            });
+            
+            // Forzamos la actualización del campo de observaciones por si se marcó algo distinto
+            if (alumnoId) {
+                this.toggleObsAsistencia(alumnoId);
+            }
+        });
+    },
+    
     saveAsistencia: async function() {
         const fecha = document.getElementById('asist-fecha').value;
         const materiaId = document.getElementById('asist-materia').value;
