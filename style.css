@@ -73,12 +73,31 @@ td input[type="radio"] { transform: scale(1.5); cursor: pointer; }
 .spinner { position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1000; }
 .spinner.hidden { display: none; }
 
-/* Responsive */
+/* Responsive y Vista Compacta para Móviles */
 @media (max-width: 768px) {
+    /* 1. Arreglo del Menú Hamburguesa */
     .sidebar { position: absolute; height: 100%; z-index: 100; transform: translateX(-100%); width: 250px; }
-    .sidebar.active { transform: translateX(0); }
-    .menu-toggle-desktop { display: none; }
+    .sidebar.active { transform: translateX(0); box-shadow: 2px 0 5px rgba(0,0,0,0.5); }
+    .menu-toggle-desktop { display: inline-block; margin-bottom: 15px; } /* Mantenemos el botón visible */
     .menu-toggle-mobile { display: block; }
+
+    /* 2. Compactación de Interfaz (Menos zoom visual) */
+    body { font-size: 14px; } /* Achica la fuente base */
+    .main-content { padding: 10px; }
+    .panel { padding: 12px; margin-bottom: 15px; }
+    
+    /* 3. Ajuste de Tablas para que entre más info */
+    th, td { padding: 8px 6px; font-size: 13px; }
+    td input[type="radio"] { transform: scale(1.2); } /* Radios un poco más chicos */
+    
+    /* 4. Ajuste de Botones y Formularios */
+    .filters, .form-group { gap: 8px; }
+    .filters input, .filters select, .form-group input, .form-group select { min-width: 100%; padding: 8px; }
+    button.btn-primary, button.btn-secondary { padding: 8px 12px; font-size: 14px; }
+    
+    /* Ajuste de tu botonera masiva de Asistencia */
+    .bulk-actions { gap: 5px; }
+    .bulk-actions button { padding: 5px 8px; font-size: 12px; width: 100%; margin-bottom: 5px;}
 }
 
 @media print {
