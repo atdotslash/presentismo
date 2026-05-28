@@ -146,16 +146,47 @@ const app = {
         }
     },
 
-    loadMateriasDia: function(selectId, dateString) {
+loadMateriasDia: function(selectId, dateString) {
         const select = document.getElementById(selectId);
         select.innerHTML = '';
-        // Simplificación: Cargar todas las materias si no hay cruce de horarios complejo configurado
-        this.state.materias.forEach(m => {
+
+        // 1. Convertir la fecha seleccionada a Día de la Semana
+        // Separamos el string (YYYY-MM-DD) para evitar problemas de zona horaria de JavaScript
+        const [year, month, day] = dateString.split('-');
+        const dateObj = new Date(year, month - 1, day);
+        
+        const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const nombreDia = diasSemana[dateObj.getDay()]; // Ej: "Jueves"
+
+        // 2. Buscar en la hoja "horarios" qué materias tocan ese día específico
+        const horariosDelDia = this.state.horarios.filter(h => h.dia === nombreDia);
+
+        // 3. Extraer los IDs de esas materias (usamos Set para no repetir si hay doble bloque)
+        const materiasIds = [...new Set(horariosDelDia.map(h => h.materia_id))];
+
+        // 4. Filtrar la lista general de materias usando esos IDs
+        const materiasDelDia = this.state.materias.filter(m => materiasIds.includes(m.id));
+
+        // 5. Llenar el desplegable
+        if (materiasDelDia.length === 0) {
+            let opt = document.createElement('option');
+            opt.value = "";
+            opt.text = `Sin materias asignadas para el día ${nombreDia}`;
+            select.appendChild(opt);
+            
+            // Limpiamos la tabla porque no hay alumnos que mostrar
+            document.getElementById('tbody-asistencia').innerHTML = ''; 
+            return;
+        }
+
+        materiasDelDia.forEach(m => {
             let opt = document.createElement('option');
             opt.value = m.id;
             opt.text = m.nombre;
             select.appendChild(opt);
         });
+
+        // 6. Cargar los alumnos de la primera materia que quedó seleccionada
         this.renderAsistenciaList();
     },
 
