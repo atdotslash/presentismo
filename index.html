@@ -50,6 +50,14 @@
                         <option value="Grupo B">Grupo B</option>
                     </select>
                 </div>
+
+                <div class="bulk-actions" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <span style="font-weight: bold; font-size: 0.9em; color: var(--secondary);">Acción masiva:</span>
+                    <button class="btn-secondary badge" style="background: var(--primary); border: none; cursor: pointer; padding: 6px 12px;" onclick="app.marcarTodos('PRESENTE')">Todos Presentes</button>
+                    <button class="btn-secondary badge" style="background: var(--secondary); border: none; cursor: pointer; padding: 6px 12px;" onclick="app.marcarTodos('NO APLICA')">Todos No Aplica</button>
+                    <button class="btn-secondary badge" style="background: var(--ted); border: none; cursor: pointer; padding: 6px 12px;" onclick="app.marcarTodos('AUSENTE')">Todos Ausentes</button>
+                </div>
+                
                 <div class="table-responsive">
                     <table id="table-asistencia">
                         <thead>
